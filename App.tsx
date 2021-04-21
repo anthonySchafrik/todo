@@ -1,44 +1,46 @@
-import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import React, {useState} from 'react';
+import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Button from './components/Button';
+import TodoContainer from './components/TodoContainer';
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    backgroundColor: Colors.darker,
     height: '100%',
     width: '100%',
   };
 
+  const [todos, setTodos] = useState<string[]>([]);
+
+  function handleTodo(todo: string | undefined, index: number, math: string) {
+    if (math === 'add' && todo) {
+      setTodos([...todos, todo]);
+
+      return;
+    }
+
+    setTodos([
+      ...todos.slice(0, index),
+      ...todos.slice(index + 1, todos.length),
+    ]);
+  }
+
   return (
     <SafeAreaView style={backgroundStyle}>
-      <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <Text style={styles.text}>Todo List</Text>
-        <View style={styles.buttonContainer}>
-          <Button text="Add Todo" onPress={() => console.log('add')} />
-          <Button text="Delete Todo" onPress={() => console.log('delete')} />
-        </View>
-      </ScrollView>
+      <Text style={styles.text}>Todo List</Text>
+      <TodoContainer todos={todos} handleTodo={handleTodo} />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  text: {fontSize: 25, alignSelf: 'center', marginVertical: 8},
-  buttonContainer: {
-    marginVertical: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  text: {
+    fontSize: 25,
+    alignSelf: 'center',
+    marginVertical: 8,
+    color: '#4E4E4E',
   },
 });
 
