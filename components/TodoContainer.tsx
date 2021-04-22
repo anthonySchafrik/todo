@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, Text, TextInput, ScrollView} from 'react-native';
-import Button from './Button';
+
 import TodoRow from './TodoRow';
 
 interface Props {
@@ -12,6 +12,10 @@ export default function TodoContainer({todos, handleTodo}: Props) {
   const [update, setUpdate] = useState<undefined | string>(undefined);
 
   function handleEndEditing() {
+    if (update === undefined) {
+      return;
+    }
+
     handleTodo(update, 0, 'add');
     setUpdate(undefined);
   }
