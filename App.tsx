@@ -1,6 +1,13 @@
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
-import {AsyncStorage, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  // AsyncStorage,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Button from './components/Button';
@@ -33,6 +40,10 @@ const App = () => {
       const jsonValue = JSON.stringify(todos);
 
       await AsyncStorage.setItem('todos', jsonValue);
+
+      Alert.alert('Todos where saved', 'You can safely close the app', [
+        {text: 'OK', onPress: () => {}},
+      ]);
     } catch (e) {
       console.log(e);
     }
@@ -77,6 +88,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignSelf: 'center',
+    paddingBottom: 25,
   },
 });
 
