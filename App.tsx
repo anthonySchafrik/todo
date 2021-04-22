@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useEffect, useState} from 'react';
+import {AsyncStorage, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Button from './components/Button';
@@ -27,10 +28,42 @@ const App = () => {
     ]);
   }
 
+  async function saveTodos() {
+    try {
+      const jsonValue = JSON.stringify(todos);
+
+      await AsyncStorage.setItem('todos', jsonValue);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function fetchTodos() {
+    try {
+      const jsonValue = await AsyncStorage.getItem('todos');
+
+      setTodos(jsonValue != null ? JSON.parse(jsonValue) : []);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    fetchTodos();
+
+    return () => {
+      saveTodos();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <Text style={styles.text}>Todo List</Text>
       <TodoContainer todos={todos} handleTodo={handleTodo} />
+      <View style={styles.buttonContainer}>
+        <Button text="Save todos" onPress={saveTodos} />
+      </View>
     </SafeAreaView>
   );
 };
@@ -41,6 +74,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginVertical: 8,
     color: '#4E4E4E',
+  },
+  buttonContainer: {
+    alignSelf: 'center',
   },
 });
 
