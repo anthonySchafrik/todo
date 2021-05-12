@@ -1,3 +1,4 @@
+import Analytics from 'appcenter-analytics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
 import {
@@ -22,7 +23,17 @@ const App = () => {
 
   const [todos, setTodos] = useState<string[]>([]);
 
+  async function trackEvent(math: string, payload: any) {
+    try {
+      await Analytics.trackEvent(`${math} todo`, payload);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   function handleTodo(todo: string | undefined, index: number, math: string) {
+    trackEvent(math, {todo, index});
+
     if (math === 'add' && todo) {
       setTodos([...todos, todo]);
 
