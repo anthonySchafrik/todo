@@ -1,4 +1,5 @@
 import Analytics from 'appcenter-analytics';
+import Crashes from 'appcenter-crashes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
 import {
@@ -28,6 +29,27 @@ const App = () => {
       await Analytics.trackEvent(`${math} todo`, payload);
     } catch (error) {
       console.log(error);
+
+      checkCrash();
+    }
+  }
+
+  async function checkCrash() {
+    const didCrash = await Crashes.hasCrashedInLastSession();
+
+    if (didCrash) {
+      const crashReport = await Crashes.lastSessionCrashReport();
+      const na = 'not available';
+
+      const payload = {
+        osName: crashReport?.device.osName || na,
+        appVersion: crashReport?.device.appVersion || na,
+        screenSize: crashReport?.device.screenSize || na,
+        model: crashReport?.device.model || na,
+        errorTime: crashReport.appErrorTime + '',
+      };
+
+      await Analytics.trackEvent('CrashReport', payload);
     }
   }
 
@@ -71,6 +93,7 @@ const App = () => {
   }
 
   useEffect(() => {
+    checkCrash();
     fetchTodos();
 
     return () => {
